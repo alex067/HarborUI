@@ -1,0 +1,26 @@
+.btn{
+    font-size: $font-regular;
+    border-radius: 5px;
+    padding: 1.5rem 2rem;
+    cursor: pointer;
+    &-primary{
+        color: $color-white;
+        background-color: $color-primary;
+        opacity: .9;
+        transition: .1s all;
+        &:hover{
+            opacity: 1;
+            background-color: $color-primary-dark;
+        }
+    }
+    &-secondary{
+        color: $color-white;
+        background-color: $color-secondary;
+        opacity: .9;
+        transition: .1s all;
+        &:hover{
+            opacity: 1;
+            background-color: $color-secondary-dark;
+        }
+    }
+}
