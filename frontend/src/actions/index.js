@@ -1,20 +1,16 @@
-import {FETCH_USER, CHANGE_USER, FETCH_JOBS} from './types';
-import Api from '../api';
+import {FETCH_USER, SETUP_FLAG, REGISTER_USER} from './types';
 
-export const fetchUser = () => (
-    async dispatch => {
-        const res = await Api.get('/api/users')
-        dispatch({type: FETCH_USER, payload:res.data})
-    }
-)
+const baseURL = 'http://localhost:5000'
 
-export const registerUser = (username, password) => (
+export const checkSetup = () => (
     async dispatch => {
-        const res = await Api.post('/signup', {
-            username: username,
-            password: password
+        const res = await fetch(`${baseURL}/api/users`, {
+            mehtod: 'GET'      
         })
-        dispatch({type: FETCH_USER, payload: res.data})
+        res.json().then( data => {
+            dispatch({type: SETUP_FLAG, payload:data})
+        })
     }
 )
+
 
