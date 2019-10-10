@@ -15,7 +15,7 @@ class Header extends Component {
                         <span className="navbar-brand__logo">
                            &nbsp;
                         </span>
-                        <span className="navbar-brand__title">Cron<span className="navbar-brand__title__sub">UI</span></span>
+                        <span className="navbar-brand__title">Harbor<span className="navbar-brand__title__sub">UI</span></span>
                     </div>
                 </div>
             </nav>

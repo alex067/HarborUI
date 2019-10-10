@@ -13,7 +13,7 @@ class Login extends Component {
             <section className="login">
                 <div className="container" >
                     <div className="login-body">
-                      
+                      login page
                     </div>
                 </div>
             </section>

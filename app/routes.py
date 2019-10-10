@@ -1,30 +1,59 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect
 from passlib.hash import pbkdf2_sha256
 from app import app, db
 from .models import User
 
 @app.route('/api/signup', methods=['POST'])
 def register():
-    username = request.form['username']
-    password = request.form['password']
+    form_data = request.get_json()
+
+    username = form_data['username']
+    password = form_data['password']
+    email = form_data['email'] if 'email' in form_data else ''
+    fullname = form_data['fullname']
+    roletype = form_data['roletype']
+
     password_hash = pbkdf2_sha256.hash(password)
 
+    print(username, password, email, fullname, roletype)
     existing_user = User.query.filter_by(username=username).first() 
     print(existing_user)
+
+    temp_data = {
+        'status': -1,
+        'error': 'User exists'
+    }
+    # -1 indicates the user already exists
+    return jsonify(temp_data)
     
     if(existing_user):
-        return "user exists"
+        temp_data = {
+            'status': -1,
+            'error': 'User exists'
+        }
+        # -1 indicates the user already exists
+        return jsonify(temp_data)
 
-    new_user = User(username=username, password=password_hash)
+    new_user = User(
+        username=username, 
+        password=password_hash, 
+        email=email, 
+        fullname=fullname, 
+        role_type=roletype
+    )
     db.session.add(new_user)
-    db.session.commit()
+    #db.session.commit()
 
-    print(new_user.id)
-    return new_user.id
+    temp_data ={
+        "id": 1,
+        "username": username,
+        "roletype": roletype
+    }
+
+    return jsonify(temp_data)
 
 @app.route('/api/users', methods=['GET'])
 def currentuser():
     current_users = User.query.all()
-    initial_setup = True if len(current_users) == 0 else False
 
-    return jsonify({'setup': initial_setup})
+    return jsonify({'users': current_users})

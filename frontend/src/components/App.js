@@ -1,53 +1,47 @@
-import React, {Fragment} from 'react'
-import {BrowserRouter as Router, Route, Link, Redirect} from "react-router-dom"
-import {connect} from 'react-redux';
+import React, {Fragment, useState, useEffect} from 'react';
+import {BrowserRouter as Router, Route, Link, Redirect} from "react-router-dom";
 
+import baseURL from '../config';
 import Header from './Header';
 import Login from '../pages/Login';
+import Setup from '../pages/Setup';
 import RegisterForm from '../components/forms/RegisterForm';
 import Dashboard from './Dashboard';
 
-import * as actions from '../actions'
+function App(){
+    const [setup, setSetup] = useState(false);
 
-class App extends React.Component {
-    constructor(){
-        super()
-        this.state = {
-            setupFlag : false
+    useEffect( () => {
+        async function checkSetup() {
+            const res = await fetch(`${baseURL}/api/users`, {
+                mehtod: 'GET'      
+            })
+            res.json().then( data => {
+                    data.users.length === 0 ?  setSetup(true) : setSetup(false);
+                }
+            )
         }
+        checkSetup();
+    }, []);
+
+    const handleSetup = () => {
+        setSetup(false)
     }
-    componentDidMount(){
-        
-        console.log(this.props.user)
-      
-    }
-    renderInitialPage(){
-    
-        if(this.state.setupFlag){
-            return <RegisterForm></RegisterForm>
-        }
-        return (
-            <Router>
-                <Route path="/" exact component={Login}></Route>
-                <Route path ="/dashboard" exact component={Dashboard}></Route>
-            </Router>
-        )
-    }
-    render(){
-        return (
-            <Fragment>
-                <Header></Header>
-                {this.renderInitialPage()}
-            </Fragment>
-        )
-    }
-    
+
+    console.log(setup)
+    return(
+        <Fragment>
+            <Header></Header>
+            {!setup ? 
+                <Router>
+                    <Route path="/" exact component={Login}></Route>
+                    <Route path="/register" exact component={RegisterForm}></Route>
+                    <Route path ="/dashboard" exact component={Dashboard}></Route>
+                </Router>  :
+                <Setup onSetupChange={handleSetup}></Setup>
+            }
+        </Fragment>
+    )
 }
 
-function mapStateToProps(state){
-    return{
-        user: state.user
-    }
-}
-
-export default connect(mapStateToProps)(App);
+export default App;
