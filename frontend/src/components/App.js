@@ -10,7 +10,8 @@ import Dashboard from './Dashboard';
 
 function App(){
     const [setup, setSetup] = useState(false);
-
+    const [dataFlag, setDataflag] = useState(false);
+    
     useEffect( () => {
         async function checkSetup() {
             const res = await fetch(`${baseURL}/api/users`, {
@@ -22,17 +23,21 @@ function App(){
             )
         }
         checkSetup();
+        
     }, []);
 
     const handleSetup = () => {
+        // handles initial set up render 
+        // make sure routes don't get rendered 
+        setDataflag(true)
         setSetup(false)
     }
 
-    console.log(setup)
     return(
         <Fragment>
             <Header></Header>
-            {!setup ? 
+            {console.log(dataFlag, setup)}
+            {!setup && dataFlag ? 
                 <Router>
                     <Route path="/" exact component={Login}></Route>
                     <Route path="/register" exact component={RegisterForm}></Route>

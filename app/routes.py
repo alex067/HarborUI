@@ -15,21 +15,12 @@ def register():
 
     password_hash = pbkdf2_sha256.hash(password)
 
-    print(username, password, email, fullname, roletype)
     existing_user = User.query.filter_by(username=username).first() 
-    print(existing_user)
 
-    temp_data = {
-        'status': -1,
-        'error': 'User exists'
-    }
-    # -1 indicates the user already exists
-    return jsonify(temp_data)
-    
     if(existing_user):
         temp_data = {
             'status': -1,
-            'error': 'User exists'
+            'error': 'A user with that username already exists.'
         }
         # -1 indicates the user already exists
         return jsonify(temp_data)
@@ -53,7 +44,7 @@ def register():
     return jsonify(temp_data)
 
 @app.route('/api/users', methods=['GET'])
-def currentuser():
+def users():
     current_users = User.query.all()
 
     return jsonify({'users': current_users})

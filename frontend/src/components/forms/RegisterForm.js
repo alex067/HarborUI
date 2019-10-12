@@ -1,8 +1,22 @@
-import React, {Component, Fragment} from 'react'
+import React, {Fragment, useState, useEffect, useRef} from 'react'
 import { Form}from 'react-final-form'
 import { Field} from 'react-final-form-html5-validation';
 import {connect} from 'react-redux';
 import {registerUser} from '../../actions'
+
+import Alert from '../messages/Alert';
+
+function getPrevious(value){
+    const ref = useRef();
+
+    // store the current value in ref
+    useEffect( () => {
+        ref.current = value;
+    }, [value]); // only re-run if value changes
+
+    //return the previous value (happens before update in useEffect above)
+    return ref.current;
+}
 
 const validate = function(values){
     const errors = {}
@@ -24,25 +38,42 @@ const validate = function(values){
     return errors
 }
 
-class RegisterForm extends Component {
-    constructor(props){
-        super(props)
-    }
-    onSubmit(values) {
-        this.props.registerUser(values)
-        this.props.onSetupChange();
-    }
-    render(){
-        if(this.props.isPending){
-            console.log("pendig")
+const RegisterForm = (props) =>{
+    const [error, setError] = useState({status: false, message: '', severity: 0})
+    
+    useEffect( ()=> {
+        const {status, message} = props.registerStatus;
+
+        // status either fails or succeeds 
+        if(status !== "pending"){
+            switch(status){
+                case "failure":
+                    setError({status: true, message, severity: 404})
+                    break;
+                case "critical":
+                    setError({status: true, message, severity: 500})
+                    break;
+                case "success":
+                    setError({status: true, message: "Successfully regsitered! Redirecting to login...", severity: 200})
+                    window.scrollTo(0,0);
+                    setInterval( () => {
+                        props.onSetupChange();
+                    }, 2000)
+                    break;
+            }
+            window.scrollTo(0,0);
         }
-        if(this.props.isSuccess){
-            console.log("success")
-        }
-        return (
+       
+    }, [props.registerStatus]);
+
+    const onSubmit = (values) => {
+        props.registerUser(values)
+    }
+
+    return(
             <div className="form">
                 <Form
-                    onSubmit={this.onSubmit.bind(this)}
+                    onSubmit={onSubmit}
                     validate={validate}
                     render={
                         ({
@@ -52,7 +83,15 @@ class RegisterForm extends Component {
                             pristine,
                             values
                         }) => (
-                            <form onSubmit={handleSubmit} className="form-main mt-lg">
+                            <form onSubmit={handleSubmit} className="form-main mt-md">
+                                {error.status === true ? 
+                                    <div className="form-errorhandler mb-md">
+                                        {console.log("yes")}
+                                        <Alert message={error.message} severity={error.severity}></Alert>
+                                    </div>
+                                    : null
+                                }
+
                                 <div className="form-main-container">
                                     <Field name="username" required maxLength={40}>
                                         {({ input, meta }) => (
@@ -110,10 +149,10 @@ class RegisterForm extends Component {
                                     <div className="form-main-field">
                                         <Field name="roletype" 
                                             component="select" 
-                                            className={"form-main-field__dropdown" + (this.props.setup ? " setup-flag" : " default")}
+                                            className={"form-main-field__dropdown" + (props.setup ? " setup-flag" : " default")}
                                             defaultValue="admin" >
                                             <option value="admin">Admin</option>
-                                            {this.props.setup ? null :     
+                                            {props.setup ? null :     
                                             <Fragment>
                                                 <option value="developer">Developer</option>
                                                 <option value="editor">Editor</option>
@@ -131,14 +170,49 @@ class RegisterForm extends Component {
                         )}
                         >
                 </Form>
-              
             </div>
+    )
+}
+/*
+class RegisterForm extends Component {
+    constructor(){
+        super()
+        this.state ={
+            error: {
+                status: false,
+                message: 'User exists sorry!'
+            }
+        }
+    }
+
+    componentDidUpdate(prevProps){
+        const currStatus = this.props.registerStatus.status;
+        const prevStatus = prevProps.registerStatus.status;
+
+        if(currStatus !== prevStatus){
+            if(currStatus=== "failure"){
+                const errorMessage = this.props.registerStatus.message
+                this.setState({
+                    error: { status: true, message: errorMessage}
+                })
+            }
+        }
+    }
+
+    onSubmit(values) {
+        this.props.registerUser(values)
+    }
+
+    render(){
+        return (
+            
         )
     }
 }
-
+*/
 const mapStateToProps = state => ({
-    requestStatus: state.request
+    registerStatus: state.user.registration,
+    user: state.user.user
 })
 
 const mapDispatchToProps = dispatch => ({

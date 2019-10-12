@@ -24,9 +24,8 @@ export const registerUser = (payload) => (
             res => res.json()
             .then(
                 jsonRes => {    
-                    console.log(jsonRes)
                     if(jsonRes['status'] === -1){
-                        dispatch({type: REGISTER_USER_FAILURE, payload:jsonRes})
+                        dispatch({type: REGISTER_USER_FAILURE, payload:jsonRes['error']})
                     }
                     else{
                         dispatch({type: REGISTER_USER_SUCCESS, payload:jsonRes})
@@ -35,7 +34,6 @@ export const registerUser = (payload) => (
                 }
             )
         ).catch(err => {
-            console.log(err)
             dispatch({type: REGISTER_USER_FAILURE, payload: err})
         })
     }

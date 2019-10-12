@@ -9,8 +9,7 @@ export default function Setup(props) {
                 <div className="setup-header">
                     <h2 className="setup-header__title">New Account Setup.</h2>
                     <p className="setup-header__subtitle mt-sm">Register an account to start <strong>scheudling</strong>, 
-                    <strong>monitoring</strong>, and <strong>automating</strong> daily tasks.</p>
-                    <p className="setup-header__subtitle mt-sm">Your initial account will be assigned the role of an <strong>administrator</strong>, 
+                    <strong>monitoring</strong>, and <strong>automating</strong> daily tasks.Your initial account will be assigned the role of an <strong>administrator</strong>, 
                     with superuser privilages.</p>
                 </div>
                 <RegisterForm onSetupChange={props.onSetupChange} setup={true}>

@@ -3,6 +3,9 @@
     margin: 0 auto;
  
     flex-basis:100%;
+    &-errorhandler{
+        width: 80%;
+    }
     &-main{
         width: 100%;
         &-container{
@@ -29,6 +32,7 @@
                 }
                 padding-bottom: .5rem;
                 border-bottom: 2px solid rgba($color-primary, .85);
+                background-color: transparent;
             }
             &__dropdown{
                 outline: none;
@@ -48,7 +52,7 @@
             &__error{
                 color: $color-secondary;
                 font-weight: 400;
-                padding: .2rem 0rem;
+                padding: .1rem 0rem;
                 font-size: $font-subtle;
             }
             &__label{
