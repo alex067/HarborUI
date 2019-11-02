@@ -1,0 +1,10 @@
+POST http://localhost:5000/auth/signup
+content-type: application/json
+
+{
+    "username": "tesd4",
+    "password": "test",
+    "email" : "",
+    "fullname" : "alex",
+    "roletype" : 0
+}

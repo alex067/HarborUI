@@ -1,12 +1,12 @@
 .mt{
     &-sm{
-        margin-top: 1rem;
+        margin-top: 1rem !important;
     }
     &-md{
-        margin-top: 2.5rem;
+        margin-top: 2.5rem !important;
     }
     &-lg{
-        margin-top: 5rem;
+        margin-top: 5rem !important;
     }
 }
 .mb{
@@ -15,6 +15,9 @@
     }
     &-md{
         margin-bottom: 2.5rem;
+    }
+    &-lg{
+        margin-bottom: 5rem !important;
     }
 }
 .mr{

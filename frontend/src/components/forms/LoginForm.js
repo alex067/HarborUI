@@ -1,9 +1,9 @@
-import React, {Fragment, useState, useEffect, useRef} from 'react'
-import {withRouter} from 'react-router-dom';
-import { Form}from 'react-final-form'
+import React, {useState, useEffect} from 'react';
+import { Form}from 'react-final-form';
 import { Field} from 'react-final-form-html5-validation';
 import {connect} from 'react-redux';
-import {registerUser} from '../../actions'
+import {loginUser} from '../../actions';
+import { useHistory, useLocation} from "react-router-dom";
 
 import Alert from '../messages/Alert';
 
@@ -12,12 +12,6 @@ const validate = function(values){
     // username validation  
     if(!values.username){
         errors.username = "Required"
-    }
-    else{
-        const firstChar = values.username.charAt(0);
-        if(!firstChar.match(/[a-z]/i)){
-            errors.username="Username must start with a letter"
-        }
     }
 
     // password validation
@@ -31,18 +25,18 @@ const validate = function(values){
         errors.confirmPassword ="Passwords must match"
     }
 
-    // name validation
-    if(!values.fullname){
-        errors.fullname ="Required"
-    }
     return errors
 }
 
-const RegisterForm = (props) =>{
+const LoginForm = (props) =>{
+    // error is a based name, should be alert instead
     const [error, setError] = useState({status: false, message: '', severity: 0})
+    const history = useHistory();
+    const location = useLocation();
+    let { from } = location.state || { from: { pathname: "/dashboard" } };
     
     useEffect( ()=> {
-        const {status, message} = props.registerStatus;
+        const {status, message} = props.loginStatus;
         // status either fails or succeeds 
         if(status !== "pending"){
             switch(status){
@@ -53,20 +47,20 @@ const RegisterForm = (props) =>{
                     setError({status: true, message, severity: 500})
                     break;
                 case "success":
-                    setError({status: true, message, severity: 200})
+                    setError({status: true, message: "Successfully logged in! Redirecting to dashboard...", severity: 200})
                     window.scrollTo(0,0);
                     setInterval( () => {
-                        props.finishSetup()
+                        history.push(from)
                     }, 2000)
                     break;
             }
             window.scrollTo(0,0);
         }
        
-    }, [props.registerStatus]);
+    }, [props.loginStatus]);
 
     const onSubmit = (values) => {
-        props.registerUser(values)
+        props.loginUser(values)
     }
 
     return(
@@ -82,7 +76,7 @@ const RegisterForm = (props) =>{
                         pristine,
                         values
                     }) => (
-                        <form onSubmit={handleSubmit} className="form-main mt-lg">
+                        <form onSubmit={handleSubmit} className="form-main mt-md">
                             {error.status === true ? 
                                 <div className="form-errorhandler mb-md">
                                     <Alert message={error.message} severity={error.severity}></Alert>
@@ -121,49 +115,9 @@ const RegisterForm = (props) =>{
                                     &nbsp;
                                 </div>
                             </div>
-                            <div className="form-main-container mt-sm">
-                                <Field name="fullname" required maxLength={120}>
-                                    {({ input, meta }) => (
-                                        <div className="form-main-field">
-                                            <input {...input} type="text" placeholder="Full Name" className="form-main-field__input" ></input>
-                                            <div className="form-main-field__error">{meta.error && meta.touched ? meta.error : <span>&nbsp;</span>}</div>
-                                        </div>
-                                    )}
-                                </Field>
-                                <Field name="email" typeMismatch="Please enter a valid email address" maxLength={120}>
-                                    {({ input, meta }) => (
-                                        <div className="form-main-field mt-sm">
-                                            <input {...input} type="email" placeholder="Email" className="form-main-field__input" ></input>
-                                            <div className="form-main-field__error">{meta.error && meta.touched ? meta.error : <span>&nbsp;</span>}</div>
-                                        </div>
-                                    )}
-                                </Field>                                       
-                                <div className="form-main-divider mt-sm">
-                                    &nbsp;
-                                </div>
-                            </div>
-                            <div className="form-main-container ta-left">
-                                <label className="form-main-field__label">Your Role</label>
-                                <div className="form-main-field">
-                                    <Field name="roletype" 
-                                        component="select" 
-                                        className={"form-main-field__dropdown" + (props.setup ? " setup-flag" : " default")}
-                                        defaultValue="0" >
-                                        <option value="0">Super</option>
-                                        {props.setup ? null :     
-                                        <Fragment>
-                                            <option value="1">Admin</option>
-                                            <option value="2">Developer</option>
-                                            <option value="3">Support</option>
-                                        </Fragment>                      
-                                        }
-
-                                    </Field>
-                                </div>
-                            </div>
                             <div className={"form-main-container mt-md"}>
                                 <button type="button" value="Reset" name="Reset" className="btn btn-secondary mr-sm" disabled={submitting || pristine } onClick={form.reset}>Reset</button>
-                                <button type="submit" value="Submit" name="Register" className="btn btn-primary" disabled={submitting}>Register</button>
+                                <button type="submit" value="Submit" name="Login" className="btn btn-primary" disabled={submitting}>Login</button>
                             </div>
                         </form>
                     )}
@@ -173,13 +127,14 @@ const RegisterForm = (props) =>{
     )
 }
 
-const mapStateToProps = state => ({
-    registerStatus: state.user.registration,
-    user: state.user.user
-})
+const mapStateToProps = state => {
+    return{
+        loginStatus: state.user.login
+    }
+}
 
 const mapDispatchToProps = dispatch => ({
-    registerUser: userInfo => dispatch(registerUser(userInfo))
+    loginUser: userInfo => dispatch(loginUser(userInfo))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

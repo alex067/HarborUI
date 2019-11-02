@@ -6,10 +6,9 @@ const Alert = ({message, severity}) => {
     if(severity === 500){
         className = "alert__message--critical"
     }
-    else if (severity === 400){
+    else if (severity === 404){
         className = "alert__message--error"
     }
-    console.log(className)
     return(
         <div className="alert">
             <h3 className={'alert__message ' + className}>{message}</h3>

@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
 
-class Dashboard extends Component {
-    render() {
-        return (
-            <div>
-                yes
-            </div>
-        )
-    }
+const Dashboard = () => {
+    const history = useHistory();
+    const location = useLocation();
+    console.log(history)
+    return (
+        <div>
+            yes
+        </div>
+    )
+
 }
 
 function mapStateToProps(state){

@@ -2,13 +2,10 @@
     width: 70%;
     margin: 0 auto;
     height: auto;
-    &--wrapper{
+
+    &-header{
         width: 80%;
         margin: 0 auto;
-        padding: 0rem 4rem;
-    }
-    &-header{
-        width: 100%;
         color: $color-black;
         &__subtitle{
             font-weight: 300;
